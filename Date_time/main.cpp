@@ -2,8 +2,9 @@
 #include "DateTime.h"
 
 int main() {
-    std::cout << "=== Демонстрация работы класса DateTime ===\n\n";
+    setlocale(LC_ALL, "Russian");
 
+    std::cout << "=== Демонстрация работы класса DateTime ===\n\n";
     DateTime dt1(2021, 12, 21, 7, 54, 34);
     DateTime dt2(2020, 1, 1);
     DateTime dt3(2021, 12, 21, 7, 54, 34);
