@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <ctime>
 #include "linelist.h"
 
@@ -26,7 +27,7 @@ int josephus(int N, int k) {
             }
             list.deleteAfter(ptr);
         }
-
+        
         size--;
     }
 
@@ -36,22 +37,23 @@ int josephus(int N, int k) {
 int main() {
     setlocale(LC_ALL, "Russian");
 
-    int N, k;
+    int tests[] = {1000, 5000, 10000, 50000, 100000, 500000, 1000000};
+    int k = 2;
 
-    cout << "Введите N (кол-во элементов): ";
-    cin >> N;
-    cout << "Введите k (шаг выбывания): ";
-    cin >> k;
+    ofstream outFile("results.csv");
+    outFile << "N,Result,Time" << endl;
 
-    clock_t start_time = clock();
+    for (int i = 0; i < 7; i++) {
+        int N = tests[i];
+        clock_t start_time = clock();
+        int result = josephus(N, k);
+        clock_t end_time = clock();
+        double elapsed = double(end_time - start_time) / CLOCKS_PER_SEC;
+        outFile << N << "," << result << "," << elapsed << endl;
+        cout << "N = " << N << " Результат: " << result << " Время: " << elapsed << endl;
+    }
 
-    int result = josephus(N, k);
-
-    clock_t end_time = clock();
-    double elapsed = double(end_time - start_time) / CLOCKS_PER_SEC;
-
-    cout << "\nРезультат: " << result << endl;
-    cout << "Время расчета: " << elapsed << " сек" << endl;
+    outFile.close();
 
     return 0;
 }
