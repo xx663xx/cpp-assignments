@@ -3,6 +3,8 @@
 
 int main()
 {
+    setlocale(LC_ALL, "Russian");
+
     Rational a;
     Rational b;
     Rational c;
