@@ -3,37 +3,31 @@
 
 #include <iostream>
 
-using namespace std;
-
 class DateTime {
 private:
-    int year;
-    int month;
-    int day;
-    int hour;
-    int minute;
-    int second;
+    int y;
+    int mo;
+    int d;
+    int h;
+    int mi;
+    int s;
 
 public:
     DateTime();
-    DateTime(int y, int m, int d, int h = 0, int min = 0, int s = 0);
+    DateTime(int year, int month, int day, int hour = 0, int minute = 0, int second = 0);
 
-    void input();
-    bool setFromString(const char str[]);
-    bool isValid() const;
+    void readDate();
+    void readFull();
+    void showDate() const;
+    void showTime() const;
+    void showFull() const;
 
-    bool isLeapYear(int y) const;
-    int daysInMonth(int y, int m) const;
-    int toDays() const;
-    void fromDays(int totalDays);
-    const char* dayOfWeek() const;
-
-    void printDate() const;
-    void printTime() const;
-    void printDateTime() const;
+    bool ok() const;
+    int getWeekDay() const;
+    int countDays() const;
 
     int operator-(const DateTime& other) const;
-    DateTime operator+(int days) const;
+    DateTime operator+(int plusDays) const;
 
     bool operator>(const DateTime& other) const;
     bool operator>=(const DateTime& other) const;
@@ -42,6 +36,7 @@ public:
     bool operator==(const DateTime& other) const;
 };
 
-void quickSort(DateTime arr[], int left, int right);
+void sortDates(DateTime arr[], int left, int right);
+void showWeekDayName(int num);
 
 #endif
