@@ -1,37 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
-#include "linelist.h"
 
 using namespace std;
 
 int josephus(int N, int k) {
-    LineList<int> list;
-
-    for (int i = N; i >= 1; i--) {
-        list.insertFirst(i);
+    int winner = 0;
+    for (int i = 2; i <= N; i++) {
+        winner = (winner + k) % i;
     }
-
-    int size = N;
-    int position = 0;
-
-    while (size > 1) {
-        position = (position + k - 1) % size;
-
-        if (position == 0) {
-            list.deleteFirst();
-        } else {
-            LineListElem<int>* ptr = list.getStart();
-            for (int i = 0; i < position - 1; i++) {
-                ptr = ptr->getNext();
-            }
-            list.deleteAfter(ptr);
-        }
-        
-        size--;
-    }
-
-    return list.getStart()->getData();
+    return winner + 1;
 }
 
 int main() {
