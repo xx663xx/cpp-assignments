@@ -60,10 +60,6 @@ void DateTime::readFull() {
             std::cout << "Введите дату и время, формат год-месяц-деньTчасы:минуты:секунды: ";
             std::cin >> y >> x1 >> mo >> x2 >> d >> x3 >> h >> x4 >> mi >> x5 >> s;
 
-            if (std::cin.fail()) {
-                throw "Ошибка ввода";
-            }
-
             if (x1 != '-' || x2 != '-' || x3 != 'T' || x4 != ':' || x5 != ':') {
                 throw "Неправильный формат. Пример: 2026-04-08T14:26:53";
             }
@@ -76,8 +72,6 @@ void DateTime::readFull() {
         }
         catch (const char* msg) {
             std::cout << msg << "\n";
-            std::cin.clear();
-            std::cin.ignore(10000, '\n');
         }
     }
 }
