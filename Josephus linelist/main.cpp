@@ -1,15 +1,65 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include "linelist.h"
 
 using namespace std;
 
-int josephus(int N, int k) {
-    int winner = 0;
-    for (int i = 2; i <= N; i++) {
-        winner = (winner + k) % i;
+LineListElem<int>* getLast(LineList<int>& list) {
+    LineListElem<int>* p = list.getStart();
+    if (!p) {
+        return nullptr;
     }
-    return winner + 1;
+
+    while (p->getNext()) {
+        p = p->getNext();
+    }
+
+    return p;
+}
+
+void goNext(LineList<int>& list, LineListElem<int>*& prev, LineListElem<int>*& cur, int step, int k) {
+    if (step == k) {
+        return;
+    }
+
+    prev = cur;
+    cur = cur->getNext();
+    if (!cur) {
+        cur = list.getStart();
+    }
+
+    goNext(list, prev, cur, step + 1, k);
+}
+
+int josephus(int N, int k) {
+    LineList<int> list;
+
+    for (int i = N; i >= 1; i--) {
+        list.insertFirst(i);
+    }
+
+    LineListElem<int>* cur = list.getStart();
+    LineListElem<int>* prev = getLast(list);
+
+    while (N > 1) {
+        goNext(list, prev, cur, 1, k);
+
+        if (cur == list.getStart()) {
+            list.deleteFirst();
+            cur = list.getStart();
+        } else {
+            list.deleteAfter(prev);
+            cur = prev->getNext();
+            if (!cur) {
+                cur = list.getStart();
+            }
+        }
+
+        N--;
+    }
+
+    return list.getStart()->getData();
 }
 
 int main() {

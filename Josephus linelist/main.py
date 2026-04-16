@@ -13,14 +13,12 @@ with open("results.csv", "r", encoding="utf-8") as file:
 
 models = {
     "O(N)": [],
-    "O(N log N)": [],
     "O(N^2)": [],
     "O(N^3)": []
 }
 
 for n in n_values:
     models["O(N)"].append(n)
-    models["O(N log N)"].append(n * math.log(n))
     models["O(N^2)"].append(n * n)
     models["O(N^3)"].append(n * n * n)
 
@@ -73,8 +71,6 @@ future_x = []
 for n in future_n:
     if best_name == "O(N)":
         future_x.append(n)
-    elif best_name == "O(N log N)":
-        future_x.append(n * math.log(n))
     elif best_name == "O(N^2)":
         future_x.append(n * n)
     elif best_name == "O(N^3)":
