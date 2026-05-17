@@ -1,6 +1,7 @@
 #include "graph.h"
 
 int main() {
+    // Загружаем исходный граф из файла со списком ребер.
     Graph g("testgraph.txt");
     if (g.size() == 0) {
         std::cout << "Не удалось прочитать testgraph.txt\n";
@@ -11,6 +12,8 @@ int main() {
     std::set<Node*> used;
     int num = 1;
 
+    // Проходим по всем вершинам. Если вершина еще не встречалась в обходах,
+    // запускаем BFS и получаем новую компоненту связности.
     for (node_iterator it = g.begin(); it != g.end(); it++) {
         if (used.find(*it) == used.end()) {
             std::set<Node*> comp;
@@ -18,10 +21,15 @@ int main() {
 
             Graph part;
             std::set<Node*>::iterator jt;
+
+            // Сначала копируем в отдельный граф все вершины компоненты.
+            // Ребра добавляются вторым проходом, когда все нужные вершины уже созданы.
             for (jt = comp.begin(); jt != comp.end(); jt++) {
                 part.addNode(new Node((*jt)->getName()));
             }
 
+            // Восстанавливаем только внутренние ребра компоненты,
+            // сосед должен принадлежать тому же множеству comp.
             for (jt = comp.begin(); jt != comp.end(); jt++) {
                 Node* old1 = *jt;
                 Node* new1 = part.findNode(old1->getName());
@@ -33,6 +41,7 @@ int main() {
                 }
             }
 
+            // Каждая найденная компонента сохраняется в отдельный файл.
             std::string out_name = "component_" + std::to_string(num) + ".txt";
             part.saveToFile(out_name.c_str());
             num++;

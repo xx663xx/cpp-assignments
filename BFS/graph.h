@@ -10,6 +10,8 @@
 class Node;
 typedef std::set<Node*>::const_iterator node_iterator;
 
+// Вершина хранит только свое имя и список соседей.
+// Добавлять и удалять связи должен Graph, чтобы ребра оставались симметричными.
 class Node {
     std::string name;
     std::set<Node*> neighbours;
@@ -23,6 +25,8 @@ public:
     friend class Graph;
 };
 
+// Неориентированный граф.
+// Graph владеет объектами Node*: добавленные вершины удаляются в деструкторе.
 class Graph {
     std::set<Node*> nodes;
 public:
@@ -43,6 +47,7 @@ public:
     void saveToFile(const char* file_name) const;
 };
 
+// Поиск в ширину используется для проверки связности и выделения компонент.
 class BFS {
     const Graph& graph;
 public:
