@@ -25,6 +25,39 @@ bool Rational::fitsInt(long long value)
     return value >= -LIMIT && value <= LIMIT;
 }
 
+int Rational::perfectSquareRoot(int value)
+{
+    if (value < 0)
+    {
+        return -1;
+    }
+
+    int left = 0;
+    int right = 46340;
+
+    while (left <= right)
+    {
+        int mid = left + (right - left) / 2;
+        long long square = (long long)mid * mid;
+
+        if (square == value)
+        {
+            return mid;
+        }
+
+        if (square < value)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
+    }
+
+    return -1;
+}
+
 void Rational::simplify()
 {
     if (denom == 0)
@@ -141,6 +174,14 @@ Rational Rational::sqrtRational() const
     if (*this == Rational(0))
     {
         return Rational(0);
+    }
+
+    int rootNumer = perfectSquareRoot(numer);
+    int rootDenom = perfectSquareRoot(denom);
+
+    if (rootNumer != -1 && rootDenom != -1)
+    {
+        return Rational(rootNumer, rootDenom);
     }
 
     Rational x;

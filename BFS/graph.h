@@ -29,9 +29,13 @@ public:
 // Graph владеет объектами Node*: добавленные вершины удаляются в деструкторе.
 class Graph {
     std::set<Node*> nodes;
+    void clear();
+    void copyFrom(const Graph& other);
 public:
     Graph() {}
     Graph(const char* file_name);
+    Graph(const Graph& other);
+    Graph& operator=(const Graph& other);
     ~Graph();
 
     void addNode(Node* node);

@@ -13,6 +13,7 @@ private:
     void simplify();
     void limitPrecision(int maxDenom);
     static int gcdInt(int a, int b);
+    static int perfectSquareRoot(int value);
     static bool fitsInt(long long value);
     static const int LIMIT = 2147483647;
 

@@ -81,11 +81,46 @@ Graph::Graph(const char* file_name) {
     fin.close();
 }
 
-Graph::~Graph() {
+void Graph::clear() {
     for (std::set<Node*>::iterator it = nodes.begin(); it != nodes.end(); it++) {
         delete *it;
     }
     nodes.clear();
+}
+
+void Graph::copyFrom(const Graph& other) {
+    // Сначала копируем вершины.
+    for (node_iterator it = other.begin(); it != other.end(); it++) {
+        addNode(new Node((*it)->getName()));
+    }
+
+    // Потом копируем ребра между уже созданными вершинами.
+    for (node_iterator it = other.begin(); it != other.end(); it++) {
+        Node* old1 = *it;
+        Node* new1 = findNode(old1->getName());
+
+        for (node_iterator jt = old1->nb_begin(); jt != old1->nb_end(); jt++) {
+            Node* new2 = findNode((*jt)->getName());
+            addEdge(new1, new2);
+        }
+    }
+}
+
+Graph::Graph(const Graph& other) {
+    copyFrom(other);
+}
+
+Graph& Graph::operator=(const Graph& other) {
+    if (this != &other) {
+        clear();
+        copyFrom(other);
+    }
+
+    return *this;
+}
+
+Graph::~Graph() {
+    clear();
 }
 
 void Graph::saveToFile(const char* file_name) const {

@@ -1,0 +1,6 @@
+Rectangle = 3
+Circle = 4
+Triangle = 3
+Noise = 6
+Total area = 3521.85
+Land area = 1719760.50
