@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include <iomanip>
 #include "Shape.h"
 
 using namespace std;
@@ -22,6 +21,8 @@ struct Result {
     double landArea;
 };
 
+// Считаем, сколько раз последовательность меняет направление роста.
+// Это помогает отличать треугольник от произвольной каракули.
 int countChanges(const vector<int>& a) {
     int changes = 0;
     int last = 0;
@@ -47,6 +48,8 @@ int countChanges(const vector<int>& a) {
     return changes;
 }
 
+// Если пользователь не указал имя результата, создаем понятное имя автоматически:
+// input1.dat  result_input1.txt.
 string makeOutputFileName(const string& inputFileName) {
     size_t start = inputFileName.find_last_of("/\\");
 
@@ -65,6 +68,8 @@ string makeOutputFileName(const string& inputFileName) {
     return "result_" + inputFileName.substr(start, end - start) + ".txt";
 }
 
+// Обрабатывает один файл 200x200. Ищет фигуры, классифицирует их
+// и складывает найденные объекты в вектор указателей Shape*.
 bool solveFile(const string& fileName, Result& result) {
     ifstream fin(fileName);
 
@@ -103,6 +108,8 @@ bool solveFile(const string& fileName, Result& result) {
     int triangleCount = 0;
     int noiseCount = 0;
 
+    // Проходим по всем клеткам поля. Когда встречаем еще не посещенную единицу,
+    // запускаем обход связной компоненты — это одна нарисованная область.
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < m; j++) {
             if (field[i][j] != '1' || used[i][j]) {
@@ -114,6 +121,7 @@ bool solveFile(const string& fileName, Result& result) {
             q.push_back({i, j});
             used[i][j] = 1;
 
+            // Обычный BFS по четырем соседям. вверх, вниз, влево, вправо.
             size_t head = 0;
 
             while (head < q.size()) {
@@ -139,10 +147,13 @@ bool solveFile(const string& fileName, Result& result) {
 
             int pixels = points.size();
 
+            // По условию короткие черточки и точки в расчет не принимаются.
             if (pixels < 15) {
                 continue;
             }
 
+            // Bounding box нужен для грубой оценки формы
+            // ширины, высоты и степени заполненности прямоугольной рамки.
             int minX = points[0].x;
             int maxX = points[0].x;
             int minY = points[0].y;
@@ -167,18 +178,23 @@ bool solveFile(const string& fileName, Result& result) {
             int w = maxY - minY + 1;
             double fill = (double)pixels / (h * w);
 
+            // Почти полностью заполненный bounding box считаем прямоугольником.
             if (fill > 0.95) {
                 rectangleCount++;
                 shapes.push_back(new Rectangle(w, h));
                 continue;
             }
 
+            // У круга ширина и высота почти равны, а заполненность близка к pi/4.
             if (abs(h - w) <= 2 && fill >= 0.62 && fill <= 0.8) {
                 circleCount++;
                 shapes.push_back(new Circle((double)(h < w ? h : w) / 2.0));
                 continue;
             }
 
+            // Для треугольников смотрим, как меняется ширина по строкам
+            // и высота по столбцам. У нормального треугольника эти изменения
+            // более упорядоченные, чем у произвольной каракули.
             vector<int> rowWidth(h, 0);
             vector<int> colHeight(w, 0);
             vector<int> left(h, m);
@@ -240,10 +256,13 @@ bool solveFile(const string& fileName, Result& result) {
 
     double totalArea = 0;
 
+    // Здесь используется полиморфизм. в одном векторе лежат разные фигуры,
+    // но у каждой через Shape* вызывается ее собственная формула calc_area().
     for (size_t i = 0; i < shapes.size(); i++) {
         totalArea += shapes[i]->calc_area();
     }
 
+    // Площадь участка считается отдельно по координатам многоугольника из файла.
     Polygon land("granitsy-uchastka2.txt");
     double landArea = land.calc_area();
 
@@ -264,6 +283,7 @@ bool solveFile(const string& fileName, Result& result) {
     return true;
 }
 
+// Записываем результат в файл, чтобы после запуска сразу появились готовые отчеты.
 bool writeResult(const string& outputFileName, const Result& result) {
     ofstream fout(outputFileName.c_str());
 
@@ -272,7 +292,8 @@ bool writeResult(const string& outputFileName, const Result& result) {
         return false;
     }
 
-    fout << fixed << setprecision(2);
+    fout.setf(ios::fixed);
+    fout.precision(2);
     fout << "Rectangle = " << result.rectangleCount << endl;
     fout << "Circle = " << result.circleCount << endl;
     fout << "Triangle = " << result.triangleCount << endl;
@@ -286,6 +307,7 @@ bool writeResult(const string& outputFileName, const Result& result) {
     return true;
 }
 
+// Полный цикл для одного входа - распознать фигуры и сохранить результат.
 bool runOneFile(const string& inputFileName, const string& outputFileName) {
     Result result = {0, 0, 0, 0, 0, 0};
 
@@ -304,6 +326,8 @@ bool runOneFile(const string& inputFileName, const string& outputFileName) {
 int main(int argc, char* argv[]) {
     setlocale(LC_ALL, "Russian");
 
+    // Если файл передан аргументом, обрабатываем только его.
+    // Если имя результата не передано, программа создаст его сама.
     if (argc >= 2) {
         string inputFileName = argv[1];
         string outputFileName;
@@ -317,6 +341,7 @@ int main(int argc, char* argv[]) {
         return runOneFile(inputFileName, outputFileName) ? 0 : 1;
     }
 
+    // Без аргументов автоматически прогоняем все демо-файлы из проекта.
     vector<string> inputFiles;
     inputFiles.push_back("ГенераторФигур/Demo-task/input1.dat");
     inputFiles.push_back("ГенераторФигур/Demo-task/input2.dat");

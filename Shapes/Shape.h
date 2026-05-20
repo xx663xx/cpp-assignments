@@ -1,6 +1,5 @@
 #ifndef SHAPE_H
 #define SHAPE_H
-
 #include <string>
 #include <vector>
 
@@ -12,6 +11,7 @@ struct Point {
     Point(double x, double y);
 };
 
+// Базовый абстрактный класс. через него main.cpp работает с любыми фигурами одинаково.
 class Shape {
 public:
     virtual double calc_area() const = 0;
@@ -28,6 +28,7 @@ private:
 public:
     Rectangle(double a, double b);
     Rectangle(const Point& leftTop, const Point& rightBottom);
+    // Конструктор по вершинам. прямоугольник можно задавать координатами.
     Rectangle(const Point& p1, const Point& p2, const Point& p3, const Point& p4);
     double calc_area() const;
     double calc_perimetr() const;
@@ -41,6 +42,7 @@ private:
 
 public:
     Circle(double r);
+    // Центр можно задавать как Point или отдельными координатами.
     Circle(const Point& center, double r);
     Circle(double x, double y, double r);
     double calc_area() const;
@@ -77,6 +79,7 @@ private:
 
 public:
     Triangle(double a, double b, double c);
+    // В распознавании треугольников из картинки используется основание и высота.
     Triangle(double a, double h, bool byHeight);
     Triangle(const Point& p1, const Point& p2, const Point& p3);
     double calc_area() const;
@@ -90,6 +93,7 @@ private:
 
 public:
     Polygon(const std::vector<Point>& points);
+    // По заданию многоугольник должен уметь забирать координаты из файла.
     Polygon(const std::string& fileName);
     double calc_area() const;
     double calc_perimetr() const;

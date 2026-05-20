@@ -1,16 +1,18 @@
 #include "Shape.h"
-
 #include <cmath>
 #include <fstream>
 
 const double PI = 3.1415926535;
 
+// Расстояние между двумя точками используется для периметров фигур,
+// заданных координатами вершин.
 double distanceBetween(const Point& a, const Point& b) {
     double dx = a.x - b.x;
     double dy = a.y - b.y;
     return std::sqrt(dx * dx + dy * dy);
 }
 
+// Формула площади треугольника по координатам трех вершин.
 double triangleAreaByPoints(const Point& a, const Point& b, const Point& c) {
     double area = a.x * (b.y - c.y) + b.x * (c.y - a.y) + c.x * (a.y - b.y);
     return std::abs(area) / 2.0;
@@ -106,6 +108,8 @@ double Ellipse::calc_area() const {
 }
 
 double Ellipse::calc_perimetr() const {
+    // Точного простого выражения для периметра эллипса нет, поэтому берем
+    // распространенную приближенную формулу Рамануджана.
     double value = 3.0 * (a + b) - std::sqrt((3.0 * a + b) * (a + 3.0 * b));
     return PI * value;
 }
@@ -156,6 +160,7 @@ double Triangle::calc_area() const {
     double p = calc_perimetr() / 2.0;
     double value = p * (p - a) * (p - b) * (p - c);
 
+    // Если стороны не образуют корректный треугольник, площадь считаем нулевой.
     if (value <= 0) {
         return 0;
     }
@@ -203,6 +208,7 @@ Polygon::Polygon(const std::string& fileName) {
 double Polygon::calc_area() const {
     double s = 0;
 
+    // Формула Гаусса - суммируем векторные произведения соседних вершин.
     for (std::size_t i = 0; i < points.size(); i++) {
         std::size_t j = (i + 1) % points.size();
         s += points[i].x * points[j].y - points[j].x * points[i].y;
